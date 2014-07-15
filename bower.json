@@ -1,0 +1,11 @@
+{
+  "name": "senses-runtime",
+  "version": "0.0.0",
+  "dependencies": {
+    "jquery": "~1.10.2"
+  },
+  "devDependencies": {
+    "angular": "~1.2.20",
+    "angular-ui-router": "~0.2.10"
+  }
+}

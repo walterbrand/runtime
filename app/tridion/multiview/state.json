@@ -1,0 +1,20 @@
+{
+    "name": "multiview",
+    "url":"/tridion/multiview",
+    "features" : [{
+        "name": "transactions",
+        "files": ["features/transactions.js"]
+    }],
+    "views" : {
+        "" : {
+            "template": "<b><ui-view name='second'></ui-view><ui-view name='third'></ui-view></b>"
+        },
+        "second@multiview" : {
+            "template": "<i>doei</i>"
+        },
+        "third@multiview" : {
+            "template" :"<div>Hallo {{name}}</div>",
+            "controller" : "transactionsController"
+        }
+    }
+}

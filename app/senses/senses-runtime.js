@@ -64,7 +64,7 @@ angular.module('app').config(function($stateProvider, $urlRouterProvider,lazySta
     lazyStateProvider.state({
         name: 'home',
         url: '/',
-        template: '<b>Home template :{{data.stateName}}</b>'
+        template: '<b>Home template :{{data.stateName}} <g bc="ab" ng-controller="econ" name="naam"></g>  </b>'
     });
 
 
@@ -89,4 +89,25 @@ angular.module('app').run(function($rootScope, $state, lazyState, $ocLazyLoad, $
             }
         });
     })
+});
+
+angular.module('app').directive('g', function(){
+    return {
+        restrict: 'E',
+        template : '<b>wer</b>',
+
+        link: {pre: function preLink(scope, elem, attr){
+                var name = attr.name
+                if (name) {
+                    elem.scope()[name] = {c:8}
+                }
+            }
+
+        }
+    }
+});
+
+angular.module('app').controller('econ', function($scope){
+    $scope.u = 9
+    console.log($scope)
 });

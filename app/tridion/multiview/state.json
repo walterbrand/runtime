@@ -13,8 +13,20 @@
             "template": "<i>doei</i>"
         },
         "third@multiview" : {
-            "template" :"<div>Hallo {{name}}</div>",
+            "template" :"<div ng-click='klik()'>Hallo {{name}}</div>",
             "controller" : "transactionsController"
+        }
+    },
+    "modals" : {
+        "transaction" : {},
+        "notification" : {
+            "template" : "<span><button ng-click='ok()'>Ok</button></span>",
+            "controller" : "notificationController",
+            "modals" : {
+                "confirm" : {
+                    "template" : ""
+                }
+            }
         }
     }
 }

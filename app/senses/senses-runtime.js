@@ -59,7 +59,7 @@ angular.module('app').provider('lazyState', function(){
 angular.module('app').config(function($stateProvider, $urlRouterProvider,lazyStateProvider){
     lazyStateProvider.set$stateProvider($stateProvider);
 
-    $urlRouterProvider.otherwise('/');
+    //$urlRouterProvider.otherwise('/');
 
     lazyStateProvider.state({
         name: 'home',
@@ -71,7 +71,10 @@ angular.module('app').config(function($stateProvider, $urlRouterProvider,lazySta
 });
 
 angular.module('app').run(function($rootScope, $state, lazyState, $ocLazyLoad, $q){
+    var viewScopes = [];
+
     $rootScope.$on('$locationChangeSuccess', function(event, toState){
+        viewScopes = [];
         var fileLocation = toState.split('#')[1];
         lazyState.loadState(fileLocation).then(function(state){
             if (state) {
@@ -88,6 +91,19 @@ angular.module('app').run(function($rootScope, $state, lazyState, $ocLazyLoad, $
                 }
             }
         });
+    });
+    $rootScope.$on('$viewContentLoaded', function(view){
+        if (view.targetScope) {
+            viewScopes.push(view.targetScope)
+            console.log('viewConfig' , view)
+        }
+    })
+    $rootScope.$on('$locationChangeStart', function(event){
+        for (var i=0; i < viewScopes.length; i++) {
+            if (viewScopes[i].onViewChange) {
+                viewScopes[i].onViewChange(event);
+            }
+        }
     })
 });
 

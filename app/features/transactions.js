@@ -1,14 +1,18 @@
 angular.module('transactions',[]);
 
 angular.module('transactions').controller('transactionsController',function($scope,modalService){
-    $scope.name = 'Walter'
+    $scope.firstName = 'Walter'
     $scope.$on('$locationChangeStart',function(evt){
         //evt.preventDefault();
     })
     $scope.klik = function(){
-        modalService.open('notification').then(function(data){
-            console.log(data);
-        });
+        //modalService.open('notification', {text:'Dit is een notificatie'}).then(function(data){
+            //console.log(data);
+        //});
+    }
+
+    $scope.onViewChange = function(event){
+        event.preventDefault();
     }
 });
 
@@ -25,10 +29,11 @@ angular.module('transactions').factory('smb',function(){
         sub : sub
     }
 });
+/*
 
 angular.module('transactions').controller('notificationController', function($scope){
 
     $scope.ok = function(){
         $scope.notification.resolve('Het lukte!')
     }
-});
+});*/

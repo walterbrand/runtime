@@ -9,13 +9,11 @@ angular.module('app').directive('uiModal', function($compile, $interpolate){
                 var newScope = scope.$new()
                 newScope[modal.name] = data.deferred;
                 newScope.data = data.data
-console.log(newScope)
                 data.deferred.promise.then(function(){
-                    console.log('Ook hier')
+                    console.log('De modal weer inactief maken')
                     elem.html('')
                     elem.addClass('inactive')
                 })
-                console.log(template(modal))
                 var ccomp = $compile(template(modal))(newScope)
                 elem.append(ccomp)
                 elem.removeClass('inactive')
@@ -67,6 +65,13 @@ angular.module('app').provider('modalService', function(){
     return {
         registerModal : registerModal,
         $get : $get
+    }
+});
+
+angular.module('app').controller('notificationController', function($scope){
+
+    $scope.ok = function(){
+        $scope.notification.resolve('Het lukte!')
     }
 });
 

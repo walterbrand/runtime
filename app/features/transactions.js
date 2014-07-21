@@ -1,9 +1,19 @@
 angular.module('transactions',[]);
 
-angular.module('transactions').controller('transactionsController',function($scope,modalService){
+angular.module('transactions').config(function(modalProvider){
+
+    modalProvider.register({
+        name: 'mynotify',
+        template : '<div>{{data.text}}<button ng-click="myklik()">Ok</button></div>',
+        controller : 'mynotifyController'
+    })
+
+});
+
+angular.module('transactions').controller('transactionsController',function($scope,modal){
     $scope.firstName = 'Walter'
     $scope.klik = function(){
-        modalService.open('notification', {text:'Dit is een notificatie'}).then(function(data){
+        modal.open('mynotify', {text:'Dit is een notificatie'}).then(function(data){
             console.log('controller: ontvangen data: ',data);
         });
     }
@@ -26,3 +36,9 @@ angular.module('transactions').factory('smb',function(){
         sub : sub
     }
 });
+
+angular.module('transactions').controller('mynotifyController', function($scope){
+    $scope.myklik = function(){
+        $scope.mynotify.resolve('Success');
+    }
+})

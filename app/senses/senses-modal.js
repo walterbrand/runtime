@@ -22,18 +22,18 @@ angular.module('app').directive('uiModal', function($compile, $interpolate){
 
             });
         },
-        controller : function($scope, modalService, $q){
+        controller : function($scope, modal, $q){
             function listener(modal, data){
                 var deferred = $q.defer();
                 $scope.$broadcast('openModal', {modal:modal, data:data, deferred:deferred})
                 return deferred.promise;
             }
-            modalService.registerListener(listener)
+            modal.register(listener)
         }
     }
 });
 
-angular.module('app').provider('modalService', function(){
+angular.module('app').provider('modal', function(){
     var notificationModal = {
             "name" : "notification",
             "template" : "<span>{{data.text}}<br /><button ng-click='ok()'>Ok!</button></span>",
@@ -41,15 +41,15 @@ angular.module('app').provider('modalService', function(){
         },
         modalRegister = {};
 
-    function registerModal(modal){
+    function register(modal){
         modalRegister[modal.name] = modal
     }
 
-    registerModal(notificationModal);
+    register(notificationModal);
 
     var $get = ['$state', '$timeout',  function($state, $timeout){
         var listener;
-        function registerListener(_listener_){
+        function register(_listener_){
             listener = _listener_;
         }
 
@@ -59,13 +59,13 @@ angular.module('app').provider('modalService', function(){
             return listener(modal, data);
         }
         return {
-            registerListener : registerListener,
+            register : register,
             open : open
         }
     }];
 
     return {
-        registerModal : registerModal,
+        register : register,
         $get : $get
     }
 });

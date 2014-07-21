@@ -10,10 +10,10 @@
             "template": "<b><ui-view name='second'></ui-view><ui-view name='third'></ui-view></b>"
         },
         "second@multiview" : {
-            "template": "<i>doei</i>"
+            "template": "<i>De tweede template</i>"
         },
         "third@multiview" : {
-            "template" :"<div ng-click='klik()'>Hallo {{firstName}}</div>",
+            "template" :"<div ng-click='klik()'>Derde template, gevuld met transactions feature. Hallo {{firstName}}</div>",
             "controller" : "transactionsController"
         }
     }

@@ -59,7 +59,7 @@ angular.module('app').provider('lazyState', function(){
 angular.module('app').config(function($stateProvider, $urlRouterProvider,lazyStateProvider){
     lazyStateProvider.set$stateProvider($stateProvider);
 
-    //$urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/');
 
     lazyStateProvider.state({
         name: 'home',
@@ -125,5 +125,4 @@ angular.module('app').directive('g', function(){
 
 angular.module('app').controller('econ', function($scope){
     $scope.u = 9
-    console.log($scope)
 });

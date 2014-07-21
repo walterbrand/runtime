@@ -4,7 +4,7 @@ angular.module('transactions').controller('transactionsController',function($sco
     $scope.firstName = 'Walter'
     $scope.klik = function(){
         modalService.open('notification', {text:'Dit is een notificatie'}).then(function(data){
-            console.log(data);
+            console.log('controller: ontvangen data: ',data);
         });
     }
 

@@ -5,17 +5,19 @@ angular.module('app').directive('uiModal', function($compile, $interpolate){
 
             var template = $interpolate("<div ng-controller='{{controller}}' >{{template}}</div>");
             scope.$on('openModal',function(evt, data){
-                var modal = data.modal
-                var newScope = scope.$new()
+                var modal = data.modal,
+                    newScope = scope.$new();
+
                 newScope[modal.name] = data.deferred;
                 newScope.data = data.data
                 data.deferred.promise.then(function(){
                     console.log('De modal weer inactief maken')
                     elem.html('')
                     elem.addClass('inactive')
-                })
-                var ccomp = $compile(template(modal))(newScope)
-                elem.append(ccomp)
+                });
+
+                var modalElement = $compile(template(modal))(newScope)
+                elem.append(modalElement)
                 elem.removeClass('inactive')
 
             });

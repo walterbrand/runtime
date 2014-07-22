@@ -1,4 +1,4 @@
-angular.module('app',['ui.router','oc.lazyLoad']);
+angular.module('app',['ui.router','oc.lazyLoad','modal','payments']);
 
 angular.module('app').directive('nav', function($location){
     return {
@@ -64,7 +64,8 @@ angular.module('app').config(function($stateProvider, $urlRouterProvider,lazySta
     lazyStateProvider.state({
         name: 'home',
         url: '/',
-        template: '<b>Home template :{{data.stateName}} <g bc="ab" ng-controller="econ" name="naam"></g>  </b>'
+        template: '<ol><li ng-click="openNotification()">Open een voorgedefinieerde notificatie</li><li ng-click="openCustom()">Open custom notificatie</li></ol>',
+        controller : 'paymentController'
     });
 
 

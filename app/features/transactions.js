@@ -10,10 +10,11 @@ angular.module('transactions').config(function(modalProvider){
 
 });
 
-angular.module('transactions').controller('transactionsController',function($scope,modal){
+angular.module('transactions').controller('transactionsController',function($scope,$filter,modal){
     $scope.firstName = 'Walter'
     $scope.klik = function(){
         modal.open('mynotify', {text:'Dit is een notificatie'}).then(function(data){
+            console.log($filter('myfilter')({value:8},'myvalue'))
             console.log('controller: ontvangen data: ',data);
         });
     }
@@ -41,4 +42,15 @@ angular.module('transactions').controller('mynotifyController', function($scope)
     $scope.myklik = function(){
         $scope.mynotify.resolve('Success');
     }
-})
+});
+
+angular.module('transactions').filter('myfilter', function(){
+    return function(input){
+        console.log(arguments)
+        if (input.value) {
+            return true;
+        } return false;
+    }
+});
+
+angular

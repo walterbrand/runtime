@@ -4,14 +4,13 @@
     "features" : [{
         "name": "transactions",
         "files": ["features/transactions.js"]
-    },
-        {"name": "payments", "files" : "features/payments"}],
+    }],
     "views" : {
         "" : {
             "template": "<b><ui-view name='second'></ui-view><ui-view name='third'></ui-view></b>"
         },
         "second@multiview" : {
-            "template": "<i>De tweede template</i>"
+            "template": "<i><a href='#/'>Link naar home</a> <br /><a href='http://www.google.com'>Link naar buiten</a></i>"
         },
         "third@multiview" : {
             "template" :"<div ng-click='klik()'>Derde template, gevuld met transactions feature. Hallo {{firstName}}</div>",

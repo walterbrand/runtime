@@ -1,0 +1,25 @@
+{
+    "name": "transactions",
+    "url":"/tridion/transactions",
+    "features" : [{
+        "name": "transactions",
+        "files": ["features/transactions.js"]
+    },{
+        "name": "chat",
+        "files": ["features/chat.js"]
+    }],
+    "parameters" : {"chat":"transactionscontext"},
+    "views" : {
+        "" : {
+            "template": "<b><ui-view name='chat'></ui-view><ui-view name='third'></ui-view></b>"
+        },
+        "chat@transactions" : {
+            "template": "<i>Chat: {{data.settings}}</i>",
+            "controller" : "chatMainController"
+        },
+        "third@transactions" : {
+            "template" :"<div ng-click='klik()'>Transactionlist: {{data.listType}}</div>",
+            "controller" : "transactionsMainController"
+        }
+    }
+}

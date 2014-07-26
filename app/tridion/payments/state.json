@@ -1,21 +1,25 @@
 {
-    "name": "multiview",
-    "url":"/tridion/multiview",
+    "name": "payments",
+    "url":"/tridion/payments",
     "features" : [{
-        "name": "transactions",
-        "files": ["features/transactions.js"]
-    },
-        {"name": "payments", "files" : "features/payments"}],
+        "name": "payment",
+        "files": ["features/payment.js"]
+    },{
+        "name": "chat",
+        "files": ["features/chat.js"]
+    }],
+    "parameters" : {"chat":"paymentcontext"},
     "views" : {
         "" : {
-            "template": "<b><ui-view name='second'></ui-view><ui-view name='third'></ui-view></b>"
+            "template": "<b><ui-view name='chat'></ui-view><ui-view name='third'></ui-view></b>"
         },
-        "second@multiview" : {
-            "template": "<i>De tweede template</i>"
+        "chat@payments" : {
+            "template": "<i>Chat: {{data.settings}}</i>",
+            "controller" : "chatMainController"
         },
-        "third@multiview" : {
-            "template" :"<div ng-click='klik()'>Derde template, gevuld met transactions feature. Hallo {{firstName}}</div>",
-            "controller" : "transactionsController"
+        "third@payments" : {
+            "templateUrl" : "payments/main.html",
+            "controller" : "paymentsMainController"
         }
     }
 }

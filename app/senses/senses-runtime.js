@@ -1,4 +1,4 @@
-angular.module('app',['ui.router','oc.lazyLoad','modal','payments']);
+angular.module('app',['ui.router','oc.lazyLoad','modal', 'context']);
 
 angular.module('app').directive('nav', function($location){
     return {
@@ -7,10 +7,12 @@ angular.module('app').directive('nav', function($location){
         link: function(scope){
             scope.items = [
                 {label: 'home', url : '/'},
-                {label : 'multiview', url : '/tridion/multiview'}
+                {label : 'transactions', url : '/tridion/transactions'},
+                {label: 'payments', url: '/tridion/payments'}
             ]
             scope.navigate = function(url){
                 $location.path(url)
+                $location.search({});
             }
         }
     }
@@ -20,7 +22,7 @@ angular.module('app').provider('lazyState', function(){
     var $stateProvider = null;
     var stateRegister = {}
 
-    function state(state) {
+    function addState(state) {
         if (stateRegister[state.url]) {
             return;
         }
@@ -28,19 +30,31 @@ angular.module('app').provider('lazyState', function(){
         $stateProvider.state(state);
     }
 
+    function getState(url) {
+        return stateRegister[url];
+    }
 
     return {
         set$stateProvider : function(_$stateProvider_){$stateProvider = _$stateProvider_},
-        state : state,
-        $get : ['$http', '$q', function($http, $q){
+        addState : addState,
+        $get : ['$http', '$q', '$location','$state', function($http, $q, $location, $state){
+
+            // getting the exact location of where the app lives
+            var domain = $location.port() !== "" ? $location.host() + ':' + $location.port() : $location.host();
+            var absUrl = $location.absUrl().substr($location.absUrl().indexOf(domain)+ domain.length)
+            absUrl = absUrl.substr(0, absUrl.indexOf('index.html'));
+
             function loadState(url) {
                 var deferred = $q.defer();
                 if (angular.isDefined(stateRegister[url])) {
                     deferred.resolve();
                 } else {
-                    $http({url: url + '/state.json', method: 'GET'})
+                    // show some sort of loading page just before fetching the actual page
+                    $state.go('loading');
+
+                    $http({url: absUrl +  url + '/state.json', method: 'GET'})
                         .success(function(data){
-                            state(data)
+                            addState(data)
                             deferred.resolve(data)
                         })
                         .error(function(){deferred.reject()})
@@ -50,7 +64,9 @@ angular.module('app').provider('lazyState', function(){
             }
 
             return {
-                loadState : loadState
+                loadState : loadState,
+                addState : addState,
+                getState : getState
             }
         }]
     }
@@ -59,34 +75,37 @@ angular.module('app').provider('lazyState', function(){
 angular.module('app').config(function($stateProvider, $urlRouterProvider,lazyStateProvider){
     lazyStateProvider.set$stateProvider($stateProvider);
 
-    $urlRouterProvider.otherwise('/');
+    //$urlRouterProvider.otherwise('/');
 
-    lazyStateProvider.state({
+    lazyStateProvider.addState({
         name: 'home',
         url: '/',
-        template: '<ol><li ng-click="openNotification()">Open een voorgedefinieerde notificatie</li><li ng-click="openCustom()">Open custom notificatie</li></ol>',
-        controller : 'paymentController'
+        template: '<div>click <a href="#/tridion/transactions?transactionlist=latest">this link</a> to see the last transaction</div>'
+
     });
 
+    lazyStateProvider.addState({
+        name:'loading',
+        urls : '/loading',
+        template:'<div>Loading the page....</div>'
+    })
 
 });
 
-angular.module('app').run(function($rootScope, $state, lazyState, $ocLazyLoad, $q){
-    var viewScopes = [];
-
-    $rootScope.$on('$locationChangeStart', function(event){
-        for (var i=0; i < viewScopes.length; i++) {
-            if (viewScopes[i].onViewChange) {
-                viewScopes[i].onViewChange(event);
-            }
-        }
-    });
-
+angular.module('app').run(function($rootScope, $state, lazyState, $ocLazyLoad, $q, $location, tridionParameters){
     $rootScope.$on('$locationChangeSuccess', function(event, toState){
-        viewScopes = [];
-        var fileLocation = toState.split('#')[1];
+        var fileLocation = toState.split('#')[1],
+            state = lazyState.getState(fileLocation);
+
+        // stripping parameters from the file location
+        if (fileLocation.indexOf('?') > -1) {
+            fileLocation = fileLocation.substr(0, fileLocation.indexOf('?'));
+        }
         lazyState.loadState(fileLocation).then(function(state){
             if (state) {
+                if (state.parameters) {
+                    tridionParameters.set(state.name, state.parameters);
+                }
                 if (state.features) {
                     var promises = []
                     for (var i=0; i < state.features.length; i++) {
@@ -101,29 +120,11 @@ angular.module('app').run(function($rootScope, $state, lazyState, $ocLazyLoad, $
             }
         });
     });
-    $rootScope.$on('$viewContentLoaded', function(view){
-        if (view.targetScope) {
-            viewScopes.push(view.targetScope)
-        }
-    });
-});
 
-angular.module('app').directive('g', function(){
-    return {
-        restrict: 'E',
-        template : '<b>wer</b>',
-
-        link: {pre: function preLink(scope, elem, attr){
-                var name = attr.name
-                if (name) {
-                    elem.scope()[name] = {c:8}
-                }
-            }
-
-        }
+    // performing a one time check to redirect to the homepage when the location hash is unknown
+    if($location.absUrl().indexOf('#')==-1) {
+        $location.path('/')
     }
 });
 
-angular.module('app').controller('econ', function($scope){
-    $scope.u = 9
-});
+

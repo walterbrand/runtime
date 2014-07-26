@@ -1,4 +1,4 @@
-angular.module('app',['ui.router','oc.lazyLoad','modal', 'context']);
+angular.module('app',['ui.router','oc.lazyLoad', 'context']);
 
 angular.module('app').directive('nav', function($location){
     return {
@@ -34,6 +34,31 @@ angular.module('app').provider('lazyState', function(){
         return stateRegister[url];
     }
 
+    function composeState(rawState, url) {
+        var state = {};
+        state.name = rawState.name;
+
+        // linking the url with the state
+        state.url = url;
+
+        // setting the main template
+        state.views = {
+            "" : {template: rawState.composition}
+        };
+
+        // creating nested views based on name conventions
+        for (var i=0; i < rawState.features.length; i++) {
+            var feature = rawState.features[i];
+            var view = {
+                controller : feature.name + 'MainController',
+                templateUrl : feature.name + '/main.html'
+            }
+            state.views[feature.name + '@' + state.name] = view
+        }
+
+        return state;
+    }
+
     return {
         set$stateProvider : function(_$stateProvider_){$stateProvider = _$stateProvider_},
         addState : addState,
@@ -54,7 +79,8 @@ angular.module('app').provider('lazyState', function(){
 
                     $http({url: absUrl +  url + '/state.json', method: 'GET'})
                         .success(function(data){
-                            addState(data)
+                            var uiRouterState = composeState(data, url);
+                            addState(uiRouterState);
                             deferred.resolve(data)
                         })
                         .error(function(){deferred.reject()})
@@ -74,8 +100,6 @@ angular.module('app').provider('lazyState', function(){
 
 angular.module('app').config(function($stateProvider, $urlRouterProvider,lazyStateProvider){
     lazyStateProvider.set$stateProvider($stateProvider);
-
-    //$urlRouterProvider.otherwise('/');
 
     lazyStateProvider.addState({
         name: 'home',

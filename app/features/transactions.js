@@ -1,14 +1,8 @@
 angular.module('transactions',[]);
 
-angular.module('transactions').config(function(modalProvider){
-
-    modalProvider.register({
-        name: 'mynotify',
-        template : '<div>{{data.text}}<button ng-click="myklik()">Ok</button></div>',
-        controller : 'mynotifyController'
-    })
-
-});
+angular.module('transactions').run(function($templateCache){
+        $templateCache.put('transactions/main.html', '<div>Transactionlist: {{data.listType}}</div>');
+    });
 
 angular.module('transactions').controller('transactionsMainController',function($scope,$location){
     $scope.firstName = 'Walter'

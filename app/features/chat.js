@@ -1,4 +1,6 @@
-angular.module('chat',['context']);
+angular.module('chat',['context']).run(function($templateCache){
+    $templateCache.put('chat/main.html', '<i>Chat: {{data.settings}}</i>')
+});
 
 angular.module('chat').controller('chatMainController', function($scope, tridionParameters){
     function getSettings() {

@@ -1,6 +1,5 @@
 {
     "name": "payments",
-    "url":"/tridion/payments",
     "features" : [{
         "name": "payment",
         "files": ["features/payment.js"]
@@ -9,17 +8,5 @@
         "files": ["features/chat.js"]
     }],
     "parameters" : {"chat":"paymentcontext"},
-    "views" : {
-        "" : {
-            "template": "<b><ui-view name='chat'></ui-view><ui-view name='third'></ui-view></b>"
-        },
-        "chat@payments" : {
-            "template": "<i>Chat: {{data.settings}}</i>",
-            "controller" : "chatMainController"
-        },
-        "third@payments" : {
-            "templateUrl" : "payments/main.html",
-            "controller" : "paymentsMainController"
-        }
-    }
+    "composition" : "<b><ui-view name='chat'></ui-view><ui-view name='payment'></ui-view></b>"
 }

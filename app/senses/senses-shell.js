@@ -110,13 +110,14 @@ angular.module('app').config(function($stateProvider, $urlRouterProvider,lazySta
 
     lazyStateProvider.addState({
         name:'loading',
-        urls : '/loading',
         template:'<div>Loading the page....</div>'
     })
 
 });
 
 angular.module('app').run(function($rootScope, $state, lazyState, $ocLazyLoad, $q, $location, tridionParameters){
+    var storedSearch = null;
+
     $rootScope.$on('$locationChangeSuccess', function(event, toState){
         var fileLocation = toState.split('#')[1],
             state = lazyState.getState(fileLocation);
@@ -124,6 +125,7 @@ angular.module('app').run(function($rootScope, $state, lazyState, $ocLazyLoad, $
         // stripping parameters from the file location
         if (fileLocation.indexOf('?') > -1) {
             fileLocation = fileLocation.substr(0, fileLocation.indexOf('?'));
+            rest = fileLocation.substr(fileLocation.indexOf('?'))
         }
         lazyState.loadState(fileLocation).then(function(state){
             if (state) {
@@ -136,7 +138,7 @@ angular.module('app').run(function($rootScope, $state, lazyState, $ocLazyLoad, $
                         promises.push($ocLazyLoad.load(state.features[i]))
                     }
                     $q.all(promises).then(function(){
-                        $state.go(state.name)
+                        $state.go(state.name);
                     })
                 } else {
                     $state.go(state.name)
@@ -144,6 +146,16 @@ angular.module('app').run(function($rootScope, $state, lazyState, $ocLazyLoad, $
             }
         });
     });
+
+    $rootScope.$on('$stateChangeSuccess', function(evt,to){
+        // storing search if new state is loading. So when lazy loaded state is done, we can add the old search againg
+        if (to.name === 'loading') {
+            storedSearch = $location.search()
+        } else if(storedSearch !== null) {
+            $location.search(storedSearch);
+            storedSearch = null;
+        }
+    })
 
     // performing a one time check to redirect to the homepage when the location hash is unknown
     if($location.absUrl().indexOf('#')==-1) {

@@ -35,8 +35,8 @@ angular.module('payments').config(function(modalProvider){
 
 angular.module('payments').controller('paymentController', ['$scope', 'modal', function($scope, modal){
     $scope.openNotification = function(){
-        modal.open('notification', {text:'Ik ben een notificatie'}).then(function(){
-            console.log('de notificatie is weer gesloten')
+        modal.open('notification', {text:'Ik ben een notificatie'}).then(function(data){
+            console.log('de notificatie is weer gesloten en ik ontving: ' + data)
         });
     };
 
@@ -56,6 +56,7 @@ angular.module('payments').controller('mynotiController', ['$scope', function($s
     // the $scope is enhanced with resolve() and reject() that will fulfill the promise returned by the modal service
 
     $scope.myok = function(){
+        console.log('HIER')
         $scope.payments_mynotify.resolve('Het is ok');
     }
 

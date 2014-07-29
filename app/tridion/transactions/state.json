@@ -2,11 +2,11 @@
     "name": "transactions",
     "features" : [{
         "name": "transactions",
-        "files": ["features/transactions.js"]
+        "files": ["features/transactions/transactions.js"]
     },{
         "name": "chat",
-        "files": ["features/chat.js"]
+        "files": ["features/chat/chat.js"]
     }],
     "parameters" : {"chat":"transactionscontext"},
-    "composition" : "<b><ui-view name='chat'></ui-view><ui-view name='transactions'></ui-view></b>"
+    "composition" : "<b>transactions: <ui-view name='chat'></ui-view><ui-view name='transactions'></ui-view></b>"
 }

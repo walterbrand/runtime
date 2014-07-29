@@ -1,5 +1,5 @@
 {
-    "name": "payments",
+    "name": "level",
     "features" : [{
         "name": "payment",
         "files": ["features/payment/payment.js"]
@@ -7,6 +7,6 @@
         "name": "chat",
         "files": ["features/chat/chat.js"]
     }],
-    "parameters" : {"chat":"paymentcontext"},
-    "composition" : "<b>payments: <ui-view name='chat'></ui-view><ui-view name='payment'></ui-view></b>"
+    "parameters" : {"chat":"levelcontext"},
+    "composition" : "<b>payments/level: <ui-view name='chat'></ui-view><ui-view name='payment'></ui-view></b>"
 }

@@ -8,5 +8,5 @@
         "files": ["features/chat/chat.js"]
     }],
     "parameters" : {"chat":"paymentcontext"},
-    "composition" : "<b>payments: <ui-view name='chat'></ui-view><ui-view name='payment'></ui-view></b>"
+    "composition" : "<b>transactions/payments: <ui-view name='chat'></ui-view><ui-view name='payment'></ui-view></b>"
 }

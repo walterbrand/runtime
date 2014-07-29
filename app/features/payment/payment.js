@@ -1,5 +1,9 @@
 angular.module('payment',[]);
 
+angular.module('payment').config(function() {
+	console.log('config:payment');
+});
+
 angular.module('payment').run(function($templateCache){
     $templateCache.put('payment/main.html','<div>Payments: {{data.payment}} times</div>')
 })

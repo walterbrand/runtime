@@ -1,25 +1,34 @@
 angular.module('modal',[]);
-angular.module('modal').directive('uiModalContainer', function($compile, $interpolate){
+angular.module('modal').directive('uiModalContainer', function($compile, $interpolate,$timeout){
     return {
         restrict : 'E',
+        scope: {id:'@'},
         link : function(scope, elem, attr){
             // the templateWrapper wraps the template inside a div and adds the controller
             var templateWrapper = $interpolate("<div class='modalPart' ng-controller='{{controller}}' ng-show='showChild({{index}})'>{{template}}</div>");
 
+            var counter = -1;
+            var current = -1;
             var currentIndex = -1;
+            var stack = [];
 
             function inactivate (){
-                if (currentIndex === 0) {
+                var next = stack.shift();
+                if (stack.length === 0) {
                     elem.html('');
                     elem.addClass('inactive');
                 } else {
+                    if (stack[0].deferred) {
+                        $timeout(function(){stack[0].deferred.resolve();console.log('Ik sluit automatisch')},1000)
+                    }
                     angular.element(elem.children()[currentIndex]).remove()
                 }
-                currentIndex--;
             }
 
             scope.showChild = function(index) {
-                return index === currentIndex;
+                if (stack.length === 0) return false;
+                return index === stack[0].id;
+                //return index === currentIndex;
             }
 
             scope.$on('closeModal', function(){
@@ -32,7 +41,19 @@ angular.module('modal').directive('uiModalContainer', function($compile, $interp
                     // creating a new scope that will be used to compile the template
                     newScope = scope.$new();
 
-                modal.index = ++currentIndex;
+                //modal.index = ++currentIndex;
+                modal.index = ++counter;
+
+                if (scope.id === 'notification') {
+                    var modalObj = {id:modal.index};
+                    if (data.autoclose) {
+                        console.log('toevoegen')
+                        modalObj.deferred = data.deferred;
+                    }
+                    stack.push(modalObj);
+                } else {
+                    stack.unshift({id:modal.index});
+                }
 
 
                 // adding the deferred object to the scope of the controller,
@@ -58,6 +79,14 @@ angular.module('modal').directive('uiModalContainer', function($compile, $interp
                 var modalElement = $compile(templateWrapper(modal))(newScope);
 
                 // adding the element inside the modal container
+/*
+            if (scope.id==='notification') {
+                console.log('pre')
+                elem.prepend(modalElement);
+            } else {
+                console.log('app')
+            }
+*/
                 elem.append(modalElement);
 
                 // by removing the inactive class, the modal becomes visible
@@ -72,16 +101,15 @@ angular.module('modal').directive('uiModalContainer', function($compile, $interp
                 // 3 broadcasting to the directive container to actually change the htmel on the page
 
                 if (task === "open") {
-                    console.log('open')
-                    $scope.$broadcast('openModal', {modal:data.modal, data:data.data, deferred:data.deferred, index:data.index})
+                    $scope.$broadcast('openModal', {modal:data.modal, data:data.data, deferred:data.deferred, autoclose:data.autoclose})
                 } else {
-                    console.log('cliose')
+                    console.log('close')
                     $scope.$broadcast('closeModal');
                 }
                 //return deferred.promise;
             }
             // 1a. register callback van controller
-            modal.registerListener(listener)
+            modal.registerListener(listener, $scope.id)
         }
     }
 });
@@ -101,25 +129,38 @@ angular.module('modal').provider('modal', function(){
     register(notificationModal);
 
     var $get = ['$q', function($q){
-        var listener, stack = [];
+        var listeners= {}, stack = [];
         // 1b. register callback van controller
-        function registerListener(_listener_){
-            listener = _listener_;
+        function registerListener(_listener_, id){
+            console.log(id)
+            listeners[id] = _listener_;
         }
 
         function open(modalName, data){
             var modal = modalRegister[modalName];
             var deferred = $q.defer();
             modal.name = modalName
-            listener("open", {modal:modal, data:data, deferred: deferred, index: 0});
+            listeners.modal("open", {modal:modal, data:data, deferred: deferred, index: 0});
 
-            deferred.promise.finally(function(){listener("close")});
+            deferred.promise.finally(function(){listeners.modal("close")});
 
             return deferred.promise;
         }
+        function notification(modalName, data, autoclose) {
+            var modal = modalRegister[modalName];
+            var deferred = $q.defer();
+            modal.name = modalName
+            listeners.notification("open", {modal:modal, data:data, deferred: deferred, autoclose: autoclose});
+
+            deferred.promise.finally(function(){listeners.notification("close")});
+
+            return deferred.promise;
+
+        }
         return {
             registerListener : registerListener,
-            open : open
+            open : open,
+            notification : notification
         }
     }];
 

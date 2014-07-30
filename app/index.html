@@ -15,6 +15,18 @@
                 z-index: 1000;
                 background: rgba(200,200,200,0.4);
             }
+            #notification.inactive {
+                visibility: hidden;
+            }
+            #notification {
+                position : fixed;
+                left: 100px;
+                top: 100px;
+                width : 300px;
+                height : 100px;
+                z-index: 2000;
+                background : rgb(200,200,200);
+            }
         </style>
     </head>
     <body>
@@ -23,6 +35,7 @@
         <nav></nav>
         <ui-view></ui-view>
         <ui-modal-container id="modal" class="inactive"></ui-modal-container>
+        <ui-modal-container id="notification" class="inactive"></ui-modal-container>
 
 
         <script src="bower_components/angular/angular.js"></script>

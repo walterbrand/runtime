@@ -31,13 +31,25 @@ angular.module('payments').config(function(modalProvider){
         template : "<div>{{data.mijntekst}} <br /><button ng-click='myok()'>Ok</button><button ng-click='myNotok()'>Cancel</button></div>",
         controller : "mynotiController"
     })
+
+    modalProvider.register({
+        name: 'newone',
+        template : '<div>Melding: {{data.tekst}}</div>',
+        controller: 'mynotiController'
+    })
 })
 
 angular.module('payments').controller('paymentController', ['$scope', 'modal', function($scope, modal){
     $scope.openNotification = function(){
+
         modal.open('notification', {text:'Ik ben een notificatie'}).then(function(data){
             console.log('de notificatie is weer gesloten en ik ontving: ' + data)
         });
+
+        modal.notification('notification', {text:'Ik ben een echte notificatie'}).then(function(){
+
+        })
+        modal.notification('newone', {tekst: 'Ik sluit vanzelf na 5 seconden'}, true)
     };
 
     $scope.openCustom = function(){

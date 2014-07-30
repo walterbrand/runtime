@@ -28,7 +28,7 @@ angular.module('payments').config(function(modalProvider){
     //5. register a custom modal
     modalProvider.register({
         name : "payments_mynotify",
-        template : "<div>{{data.mijntekst}} <br /><button ng-click='myok()'>Ok</button><button ng-click='myNotok()'>Cancel</button></div>",
+        template : "<div>{{data.mijntekst}} <br /><span ng-controller='depcontr'></span><button ng-click='myok()'>Ok</button><button ng-click='myNotok()'>Cancel</button></div>",
         controller : "mynotiController"
     })
 
@@ -70,10 +70,18 @@ angular.module('payments').controller('mynotiController', ['$scope', function($s
     $scope.myok = function(){
         console.log('HIER')
         $scope.payments_mynotify.resolve('Het is ok');
+        //$scope.$broadcast('$destroy')
+        //$scope.$destroy();
     }
 
     $scope.myNotok = function(){
         $scope.payments_mynotify.reject('Het is NIET ok');
     }
 }]);
+
+angular.module('payments').controller('depcontr', function($scope){
+    $scope.$on('$destroy', function(){
+        console.log('ik MOET weg');
+    })
+})
 

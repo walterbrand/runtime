@@ -21,6 +21,11 @@ angular.module('modal').directive('uiModalContainer', function($compile, $interp
                     if (stack[0].deferred) {
                         $timeout(function(){stack[0].deferred.resolve();console.log('Ik sluit automatisch')},1000)
                     }
+                    $timeout(function(){
+                        // wrapping the destroy in a timeout to force it to be handled in the next digest cycle
+                        // otherwise it interferes with actually removing the element from the dom.
+                        next.scope.$destroy();
+                    })
                     angular.element(elem.children()[currentIndex]).remove()
                 }
             }
@@ -44,15 +49,15 @@ angular.module('modal').directive('uiModalContainer', function($compile, $interp
                 //modal.index = ++currentIndex;
                 modal.index = ++counter;
 
+                var domModal = {id:modal.index};
+                domModal.scope = newScope;
                 if (scope.id === 'notification') {
-                    var modalObj = {id:modal.index};
                     if (data.autoclose) {
-                        console.log('toevoegen')
-                        modalObj.deferred = data.deferred;
+                        domModal.deferred = data.deferred;
                     }
-                    stack.push(modalObj);
+                    stack.push(domModal);
                 } else {
-                    stack.unshift({id:modal.index});
+                    stack.unshift(domModal);
                 }
 
 
@@ -75,6 +80,9 @@ angular.module('modal').directive('uiModalContainer', function($compile, $interp
 
                 // by removing the inactive class, the modal becomes visible
                 elem.removeClass('inactive');
+                scope.$on('$destroy', function(){
+                    console.log('ik mag niet kapot')
+                })
 
             });
         },
